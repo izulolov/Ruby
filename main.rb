@@ -1,6 +1,6 @@
 # Класс Station (Станция):
 class Station
-  attr_reader :trains
+  attr_reader :station_name, :trains
   def initialize(station_name)
     @station_name = station_name
     @trains  = []
@@ -18,7 +18,7 @@ class Station
 
   # Может возвращать список поездов на станции по типу (см. ниже): кол-во грузовых, пассажирских
   def return_train_by_type(type)
-    @trains.each { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" if train.train_type == type}
+    @trains.select { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" if train.train_type == type}
   end
 
   # Может отправлять поезда (по одному за раз, при этом, поезд удаляется из списка поездов, находящихся на станции).
@@ -33,6 +33,21 @@ class Route
     @first_station = first_station
     @last_station = last_station
     @route_stations = [@first_station, @last_station] # Массив с всеми станциями
+  end
+
+  # Может добавлять промежуточную станцию в список
+  def add_station(station)
+    @route_stations.insert(1, station)
+  end
+
+  # Может удалять промежуточную станцию из списка
+  def delete_station(station)
+    @route_stations.delete(station)
+  end
+
+  # Может выводить список всех станций по-порядку от начальной до конечной
+  def route_stations_list
+    @route_stations.each_with_index { |st, i| puts "#{i + 1} - #{st.station_name}" }
   end
 end
 
@@ -68,3 +83,10 @@ puts st1.send_train(tr1).train_number
 
 puts 'Список поездов на станции:'
 st1.return_train_on_station
+
+rt1.route_stations_list
+puts 'Добавлять станцию'
+rt1.add_station(st3)
+rt1.route_stations_list
+rt1.delete_station(st3)
+rt1.route_stations_list

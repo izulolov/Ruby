@@ -13,17 +13,36 @@ class Station
 
   # Может возвращать список всех поездов на станции, находящиеся в текущий момент
   def return_train_on_station
-    @trains.each { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" }
+    if exists_train_on_station?
+      @trains.each { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" }
+    else
+      puts "Поездов на станции #{self.station_name} нет! "
+    end
   end
 
   # Может возвращать список поездов на станции по типу (см. ниже): кол-во грузовых, пассажирских
   def return_train_by_type(type)
-    @trains.select { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" if train.train_type == type}
+    if exists_train_on_station?
+      @trains.select { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" if train.train_type == type}
+    else
+      puts "Поездов типа #{type} на станции #{self.station_name} нет! "
+    end
   end
 
   # Может отправлять поезда (по одному за раз, при этом, поезд удаляется из списка поездов, находящихся на станции).
   def send_train(train)
-    @trains.delete(train)
+    if !exists_train_on_station?
+      puts "Поездов на станции #{self.station_name} нет, поэтому нечего отпралять!"
+    elsif @trains.include?(train)
+      @trains.delete(train)
+    else
+      puts "Такого поезда (№ #{train.train_number}) на станции #{self.station_name} нет!"
+    end
+  end
+
+  # Есть ли поезд на станции
+  def exists_train_on_station?
+    @trains.count.positive? ? true : false
   end
 end
 
@@ -43,7 +62,13 @@ class Route
 
   # Может удалять промежуточную станцию из списка
   def delete_station(station)
-    @route_stations.delete(station)
+    if !@route_stations.include?(station)
+      puts "Такой станции #{station.station_name} в списке нет!"
+    elsif (station == @first_station || station == @last_station)
+      puts 'Первую и последнюю станцию нельзя удалять!'
+    else
+      @route_stations.delete(station)
+    end
   end
 
   # Может выводить список всех станций по-порядку от начальной до конечной
@@ -55,6 +80,7 @@ end
 # Класс Train (Поезд):
 class Train
   attr_reader :train_number, :train_type, :number_wagons
+  MAX_SPEED_TRAIN = 60.freeze
   def initialize(train_number, train_type, number_wagons)
     @train_number = train_number
     @train_type = train_type
@@ -66,7 +92,7 @@ class Train
 
   # Может набирать скорость
   def up_speed(speed)
-    @speed += speed
+    @speed + speed <= MAX_SPEED_TRAIN ? @speed += speed : "В текущий момент можно увеличить скорость на #{MAX_SPEED_TRAIN - @speed} км/ч"
   end
 
   # Может возвращать текущую скорость
@@ -139,21 +165,3 @@ class Train
     current_station.take_train(self)
   end
 end
-
-st1 = Station.new('Kal')
-st2 = Station.new('Din')
-st3 = Station.new('Lat')
-
-rt1 = Route.new(st1, st2)
-
-tr1 = Train.new(2520, 'Passenger', 15)
-tr2 = Train.new(3770, 'Cargo', 18)
-
-tr1.take_route(rt1)
-tr1.forward_train
-
-puts tr1.current_station.station_name
-
-tr1.backward_train
-
-puts tr1.current_station.station_name

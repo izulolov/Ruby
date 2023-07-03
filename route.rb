@@ -9,11 +9,26 @@ class Route
 
   # Может добавлять промежуточную станцию в список
   def add_station(station)
-    @route_stations.insert(1, station)
+    add_station!(station)
   end
 
   # Может удалять промежуточную станцию из списка
   def delete_station(station)
+    delete_station!(station)
+  end
+
+  # Может выводить список всех станций по-порядку от начальной до конечной
+  def route_stations_list
+    @route_stations.each_with_index { |st, i| puts "#{i + 1} - #{st.station_name}" }
+  end
+
+  private
+
+  def add_station!(station)
+    @route_stations.insert(1, station)
+  end
+
+  def delete_station!(station)
     if !@route_stations.include?(station)
       puts "Такой станции #{station.station_name} в списке нет!"
     elsif (station == @first_station || station == @last_station)
@@ -21,10 +36,5 @@ class Route
     else
       @route_stations.delete(station)
     end
-  end
-
-  # Может выводить список всех станций по-порядку от начальной до конечной
-  def route_stations_list
-    @route_stations.each_with_index { |st, i| puts "#{i + 1} - #{st.station_name}" }
   end
 end

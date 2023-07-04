@@ -1,11 +1,12 @@
 # Класс Train (Поезд):
 class Train
-  attr_reader :train_number, :train_type, :number_wagons
+  attr_reader :train_number, :train_type, :wagon_count
   MAX_SPEED_TRAIN = 60.freeze
-  def initialize(train_number, train_type, number_wagons)
+  def initialize(train_number, train_type)
     @train_number = train_number
     @train_type = train_type
-    @number_wagons = number_wagons
+    @all_wagon = []
+    @wagon_count = 0
     @speed = 0
     @route = nil
     @station_index = nil
@@ -33,12 +34,12 @@ class Train
 
   # Может прицеплять/отцеплять вагоны (по одному вагону за операцию, метод просто увеличивает или уменьшает количество вагонов).
   # Прицепка/отцепка вагонов может осуществляться только если поезд не движется.
-  def add_wagon
-    add_wagon!
+  def add_wagon(wagon)
+    add_wagon!(wagon)
   end
 
-  def remove_wagon
-    remove_wagon!
+  def remove_wagon(wagon)
+    remove_wagon!(wagon)
   end
 
   # Может принимать маршрут следования (объект класса Route).
@@ -52,10 +53,12 @@ class Train
   def current_station
     @route.route_stations[@station_index]
   end
+
   # Следующая станция
   def next_station
     @route.route_stations[@station_index + 1]
   end
+
   # Предедущая станция
   def previos_station
     @route.route_stations[@station_index - 1]
@@ -82,19 +85,25 @@ class Train
     @speed = 0
   end
 
-  def add_wagon!
+  def add_wagon!(wagon)
     if current_speed.zero?
-      @number_wagons += 1
+      @wagon_count += 1
+      @all_wagon << wagon
     else
       puts 'Находу прицелять вагоны нельзя'
     end
   end
 
-  def remove_wagon!
-    if current_speed.zero?
-      @number_wagons -= 1
+  def remove_wagon!(wagon)
+    if @all_wagon.include?(wagon)
+      if current_speed.zero? && @wagon_count > 0
+        @wagon_count -= 1
+        @all_wagon.delete(wagon)
+      else
+        puts 'Находу оцеплять вагоны нельзя'
+      end
     else
-      puts 'Находу отцеплять вагоны нельзя'
+      puts "Не нашли такой вагон #{wagon} для удаления!"
     end
   end
 

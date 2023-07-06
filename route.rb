@@ -1,6 +1,6 @@
 # Класс Station (Станция):
 class Route
-  attr_reader :route_stations
+  attr_reader :route_stations, :first_station, :last_station
   def initialize(first_station, last_station)
     @first_station = first_station
     @last_station = last_station

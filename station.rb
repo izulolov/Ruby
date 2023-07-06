@@ -14,7 +14,7 @@ class Station
   # Может возвращать список всех поездов на станции, находящиеся в текущий момент
   def return_train_on_station
     if exists_train_on_station?
-      @trains.each { |train| puts "#{train.train_number} - #{train.train_type} - #{train.number_wagons}" }
+      @trains.each { |train| puts "#{train.train_number} - #{train.train_type} - #{train.wagon_count}" }
     else
       puts "Поездов на станции #{self.station_name} нет! "
     end

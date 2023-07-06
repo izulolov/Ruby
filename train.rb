@@ -1,6 +1,6 @@
 # Класс Train (Поезд):
 class Train
-  attr_reader :train_number, :train_type, :wagon_count
+  attr_reader :train_number, :train_type, :wagon_count, :all_wagon
   MAX_SPEED_TRAIN = 60.freeze
   def initialize(train_number, train_type)
     @train_number = train_number
@@ -38,8 +38,8 @@ class Train
     add_wagon!(wagon)
   end
 
-  def remove_wagon(wagon)
-    remove_wagon!(wagon)
+  def remove_wagon
+    remove_wagon!
   end
 
   # Может принимать маршрут следования (объект класса Route).
@@ -94,16 +94,12 @@ class Train
     end
   end
 
-  def remove_wagon!(wagon)
-    if @all_wagon.include?(wagon)
-      if current_speed.zero? && @wagon_count > 0
-        @wagon_count -= 1
-        @all_wagon.delete(wagon)
-      else
-        puts 'Находу оцеплять вагоны нельзя'
-      end
+  def remove_wagon!
+    if current_speed.zero? && @wagon_count > 0
+      @wagon_count -= 1
+      #puts "От поезда №#{self.train_number} отцепили вагон. Теперь их #{wagon_count}."
     else
-      puts "Не нашли такой вагон #{wagon} для удаления!"
+      puts 'Находу оцеплять вагоны нельзя'
     end
   end
 
